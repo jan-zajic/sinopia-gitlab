@@ -109,8 +109,9 @@ SinopiaGitlab.prototype._testConfig = function(packageName, cb) {
 		return cb(gitlabPath.error);
 	}
 
+	gitlabPath.packageName = packageName;
 	function notFount(callback) {
-		callback(new Error('Project not found: ' + packageName));
+		callback(new Error('Project not found: ' + JSON.stringify(gitlabPath)));
 	}
 	
 	function getGitlabProject(namespace, project, callback) {
@@ -279,7 +280,18 @@ SinopiaGitlab.prototype._getGitlabGroupMember = function(groupId, userId, cb) {
 				members = members.filter(function(member) {
 					return member.id === userId;
 				});
-				if(!members.length) return cb(null, null);
+				if(!members.length) {
+					self.gitlab.getGroup(groupId, token, function (error, result) {
+						if (error || !result) {
+							callback(error, null);
+						}
+						if(result.parent_id) {
+							self._getGitlabGroupMember(result.parent_id, userId, cb);
+						} else {
+							return callback(null, null);
+						}
+					});
+				}
 				cb(null, members[0]);
 			});
 		});

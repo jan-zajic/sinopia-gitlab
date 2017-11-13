@@ -3,7 +3,7 @@ var async = require('async');
 
 
 function GitlabClient(url, options) {
-	this.url = url + '/api/v3/';
+	this.url = url + '/api/v4/';
 	this.options = options;
 }
 
@@ -90,7 +90,7 @@ GitlabClient.prototype.listUsers = function(search, privateToken, cb) {
 
 GitlabClient.prototype.listAllProjects = function(search, privateToken, cb) {
 	this.paginate({
-		url: this.url + 'projects/all',
+		url: this.url + 'projects',
 		qs: {
 			private_token: privateToken,
 			search: search
@@ -114,15 +114,19 @@ GitlabClient.prototype.getProject = function(id, privateToken, cb) {
 	});
 };
 
-GitlabClient.prototype.listProjects = function(search, privateToken, cb) {
-	this.paginate({
-		url: this.url + 'projects',
+GitlabClient.prototype.getGroup = function(id, privateToken, cb) {
+	request({
+		url: this.url + 'groups/' + encodeURIComponent(id),
 		qs: {
-			private_token: privateToken,
-			search: search
+			private_token: privateToken
 		},
 		ca: this.options.caFile
-	}, cb);
+	}, function(error, response, body) {
+		if(error) return cb(error);
+		if(response.statusCode == 404) return cb(null, null);
+		if(response.statusCode < 200 || response.statusCode >= 300) return cb('Invalid status code ' + response.statusCode);
+		cb(null, JSON.parse(body));
+	});
 };
 
 GitlabClient.prototype.getProjectTeamMember = function(projectId, userId, privateToken, cb) {

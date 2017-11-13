@@ -291,8 +291,9 @@ SinopiaGitlab.prototype._getGitlabGroupMember = function(groupId, userId, cb) {
 							return callback(null, null);
 						}
 					});
+				} else {
+					cb(null, members[0]);
 				}
-				cb(null, members[0]);
 			});
 		});
 	}, cb);

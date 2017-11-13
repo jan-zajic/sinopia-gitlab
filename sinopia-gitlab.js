@@ -214,13 +214,13 @@ SinopiaGitlab.prototype._getGitlabProject = function (packageName, cb) {
 				return cb(error);
 			}
 
-			var gitlabPath = self._parsePackageName(packageName);
+			var gitlabPath = self._parsePackageName(packageName);			
 			if (gitlabPath.error) {
 				return cb(gitlabPath.error);
 			}
-
+			gitlabPath.packageName = packageName;
 			function notFount(callback) {
-				callback(new Error('Project not found: ' + packageName));
+				callback(new Error('Project not found: ' + JSON.stringify(gitlabPath)));
 			}
 
 			function getGitlabProject(namespace, project, callback) {

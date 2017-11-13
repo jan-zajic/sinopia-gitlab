@@ -127,7 +127,7 @@ SinopiaGitlab.prototype._testConfig = function(packageName, cb) {
 		var namespace = namespaces.shift();
 
 		if (namespace) {
-			var searchNs = (self.retainGroup && gitlabPath.namespace) ? namespace + '/' + gitlabPath.namespace : namespace;
+			var searchNs = gitlabPath.namespace ? namespace + '/' + gitlabPath.namespace : namespace;
 			getGitlabProject(searchNs, gitlabPath.project, function (error, result) {
 				if (error) {
 					return searchProject(callback);
@@ -243,7 +243,7 @@ SinopiaGitlab.prototype._getGitlabProject = function (packageName, cb) {
 				var namespace = namespaces.shift();
 
 				if (namespace) {
-					var searchNs = (self.retainGroup && gitlabPath.namespace) ? namespace + '/' + gitlabPath.namespace : namespace;
+					var searchNs = gitlabPath.namespace ? namespace + '/' + gitlabPath.namespace : namespace;
 					getGitlabProject(searchNs, gitlabPath.project, function (error, result) {
 						if (error) {
 							return searchProject(callback);
